@@ -42,10 +42,17 @@ const isPreview = import.meta.env.MODE === 'preview' || import.meta.env.PUBLIC_S
         var h = document.documentElement;
         h.classList.add('js');
         // Page transition: arriving from another page of this site → cover before first paint
+        // Page transition / intro — decided before first paint so nothing flashes
         try {
-          if (sessionStorage.getItem('piro:pt') === '1' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            h.classList.add('pt-arrive');
+          var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+          var ss = sessionStorage;
+          if (!reduced && ss.getItem('piro:pt') === '1') {
+            h.classList.add('pt-arrive'); // came here through a transition link
+          } else if (!reduced && !ss.getItem('piro:visited')) {
+            h.classList.add('pt-intro'); // first entry to the site in this session
+            h.style.setProperty('--intro-delay', '1700ms'); // hero animations start as the panel leaves
           }
+          ss.setItem('piro:visited', '1');
         } catch (e) {}
       })();
     </script>

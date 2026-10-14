@@ -48,15 +48,15 @@ const W = 125;
   .signet__dot { transform-origin: center; }
 
   .signet--ignite .signet__dot {
-    animation: dot-in 700ms var(--ease-out-expo) 150ms both;
+    animation: dot-in 700ms var(--ease-out-expo) calc(var(--intro-delay, 0ms) + 150ms) both;
   }
   .signet--ignite .signet__ray {
     animation: ray-out 900ms var(--ease-out-expo) both;
   }
   /* Each ray slides out from the dot along its own axis; stagger 120 ms (§2.2) */
-  .signet--ignite .signet__ray--left  { --from: translate(22%, 22%);  animation-delay: 500ms; }
-  .signet--ignite .signet__ray--mid   { --from: translate(0, 35%);    animation-delay: 620ms; }
-  .signet--ignite .signet__ray--right { --from: translate(-18%, 18%); animation-delay: 740ms; }
+  .signet--ignite .signet__ray--left  { --from: translate(22%, 22%);  animation-delay: calc(var(--intro-delay, 0ms) + 500ms); }
+  .signet--ignite .signet__ray--mid   { --from: translate(0, 35%);    animation-delay: calc(var(--intro-delay, 0ms) + 620ms); }
+  .signet--ignite .signet__ray--right { --from: translate(-18%, 18%); animation-delay: calc(var(--intro-delay, 0ms) + 740ms); }
 
   @keyframes dot-in {
     from { opacity: 0; transform: scale(0.8); }

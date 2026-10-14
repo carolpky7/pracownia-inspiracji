@@ -116,14 +116,14 @@ const nextParts = next ? dateParts(next) : null;
     transform: translateY(0.12em);
     animation: line-in 900ms var(--ease-out-expo) forwards;
   }
-  .hero__line:nth-child(1) { animation-delay: 80ms; }
-  .hero__line:nth-child(2) { animation-delay: 180ms; }
-  .hero__line:nth-child(3) { animation-delay: 280ms; }
+  .hero__line:nth-child(1) { animation-delay: calc(var(--intro-delay, 0ms) + 80ms); }
+  .hero__line:nth-child(2) { animation-delay: calc(var(--intro-delay, 0ms) + 180ms); }
+  .hero__line:nth-child(3) { animation-delay: calc(var(--intro-delay, 0ms) + 280ms); }
   @keyframes line-in { to { opacity: 1; transform: none; } }
 
   /* The spark: the magenta dot over ı ignites after the words land */
   .hero__idot::after {
-    animation: spark 700ms var(--ease-spring) 900ms both;
+    animation: spark 700ms var(--ease-spring) calc(var(--intro-delay, 0ms) + 900ms) both;
   }
   @keyframes spark {
     from { opacity: 0; transform: translateX(-50%) scale(0.2); }
@@ -135,9 +135,9 @@ const nextParts = next ? dateParts(next) : null;
     opacity: 0;
     animation: fade 300ms linear forwards;
   }
-  .hero__ellipsis span:nth-child(1) { animation-delay: 1300ms; }
-  .hero__ellipsis span:nth-child(2) { animation-delay: 1450ms; }
-  .hero__ellipsis span:nth-child(3) { animation-delay: 1600ms; color: var(--pink); }
+  .hero__ellipsis span:nth-child(1) { animation-delay: calc(var(--intro-delay, 0ms) + 1300ms); }
+  .hero__ellipsis span:nth-child(2) { animation-delay: calc(var(--intro-delay, 0ms) + 1450ms); }
+  .hero__ellipsis span:nth-child(3) { animation-delay: calc(var(--intro-delay, 0ms) + 1600ms); color: var(--pink); }
   @keyframes fade { to { opacity: 1; } }
 
   /* Signature (fallback Corinthia until real SVG signature is delivered, §13.2) */
@@ -155,7 +155,7 @@ const nextParts = next ? dateParts(next) : null;
     transform: rotate(-3deg);
     transform-origin: left center;
     clip-path: inset(-20% 100% -20% 0);
-    animation: sign 1400ms var(--ease-in-out) 1400ms forwards;
+    animation: sign 1400ms var(--ease-in-out) calc(var(--intro-delay, 0ms) + 1400ms) forwards;
   }
   @keyframes sign { to { clip-path: inset(-20% -5% -20% 0); } }
 
@@ -247,7 +247,7 @@ const nextParts = next ? dateParts(next) : null;
     height: 7px;
     border-radius: 50%;
     background: var(--pink);
-    animation: cue 6s linear 2.2s both;
+    animation: cue 6s linear calc(var(--intro-delay, 0ms) + 2200ms) both;
   }
   @keyframes cue { from { transform: translateY(0); } to { transform: translateY(62px); } }
 

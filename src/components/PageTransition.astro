@@ -1,6 +1,12 @@
 ---
 /**
- * Page transition (V2): plays ONLY when navigating between pages, never on the first visit.
+ * Page transition (V2).
+ *
+ * Intro (first entry to the site in this browser session): the panel covers the page before
+ *                        first paint, the logo builds up, then the panel wipes away.
+ *                        Hero animations wait for it via --intro-delay (set in <head>).
+ * Links inside [data-no-transition] (the whole header: logo, menu, mega-menu, Kontakt,
+ * mobile menu) navigate normally, without any overlay.
  *
  * Leave (current page):  magenta panel wipes up → white dot pops → 3 rays shoot out
  *                        from the dot (left, middle, right) → wordmark "inspıracja" rises below
@@ -82,6 +88,19 @@
     animation: pt-wm 560ms cubic-bezier(0.16, 1, 0.3, 1) 930ms forwards;
   }
 
+  /* ---------- INTRO: panel already covering, logo builds up, then wipe away ---------- */
+  html.pt-intro .pt {
+    visibility: visible;
+    pointer-events: auto;
+    clip-path: inset(0 0 0 0);
+  }
+  html.pt-intro .pt__dot { animation: pt-dot 520ms cubic-bezier(0.34, 1.56, 0.64, 1) 250ms forwards; }
+  html.pt-intro .pt__ray { animation: pt-ray 380ms cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  html.pt-intro .pt__ray--l { animation-delay: 500ms; }
+  html.pt-intro .pt__ray--m { animation-delay: 600ms; }
+  html.pt-intro .pt__ray--r { animation-delay: 700ms; }
+  html.pt-intro .pt__wm { animation: pt-wm 560ms cubic-bezier(0.16, 1, 0.3, 1) 870ms forwards; }
+
   /* ---------- ARRIVE: finished logo on magenta, then wipe away ---------- */
   html.pt-arrive .pt {
     visibility: visible;
@@ -91,10 +110,13 @@
   html.pt-arrive .pt__ray { stroke-dashoffset: 0; }
   html.pt-arrive .pt__wm { transform: none; }
 
-  html.pt-arrive.pt-exit .pt {
+  html.pt-arrive.pt-exit .pt,
+  html.pt-intro.pt-exit .pt {
     animation: pt-wipe-out 720ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
   }
-  html.pt-arrive.pt-exit .pt__logo {
+  html.pt-intro.pt-exit .pt { pointer-events: none; }
+  html.pt-arrive.pt-exit .pt__logo,
+  html.pt-intro.pt-exit .pt__logo {
     animation: pt-logo-out 520ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
   }
 
@@ -138,10 +160,23 @@
   if (document.readyState === 'complete') finishArrive();
   else window.addEventListener('load', finishArrive, { once: true });
 
+  // ---------- Intro (first entry) ----------
+  if (html.classList.contains('pt-intro')) {
+    const INTRO_BUILD_MS = 1550; // logo finished (wordmark ends ~1430 ms) + short hold
+    const built = new Promise((r) => setTimeout(r, INTRO_BUILD_MS));
+    const loaded = new Promise((r) =>
+      document.readyState === 'complete' ? r(null) : window.addEventListener('load', () => r(null), { once: true })
+    );
+    Promise.all([built, loaded]).then(() => {
+      html.classList.add('pt-exit');
+      setTimeout(() => html.classList.remove('pt-intro', 'pt-exit'), 800);
+    });
+  }
+
   // Back/forward cache: never show a stale overlay
   window.addEventListener('pageshow', (e) => {
     if (e.persisted) {
-      html.classList.remove('pt-leave', 'pt-arrive', 'pt-exit');
+      html.classList.remove('pt-leave', 'pt-arrive', 'pt-intro', 'pt-exit');
       store.clear();
     }
   });
@@ -150,7 +185,7 @@
   const isTransitionLink = (a: HTMLAnchorElement, e: MouseEvent) => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return false;
     if (a.target && a.target !== '_self') return false;
-    if (a.hasAttribute('download') || a.dataset.noTransition !== undefined) return false;
+    if (a.hasAttribute('download') || a.closest('[data-no-transition]')) return false;
     const url = new URL(a.href, location.href);
     if (url.origin !== location.origin) return false;
     if (!/^https?:$/.test(url.protocol)) return false;
