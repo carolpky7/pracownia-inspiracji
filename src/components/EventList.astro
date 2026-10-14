@@ -1,0 +1,132 @@
+---
+/** Najbliższe wydarzenia (§4.4): editorial list, not cards. Data: src/data/events.json */
+import { upcomingEvents, dateParts } from '../data/events';
+import { pillarById } from '../data/pillars';
+import PillarIcon from './PillarIcon.astro';
+
+const events = upcomingEvents();
+---
+<section class="events" id="wydarzenia" aria-labelledby="events-title">
+  <div class="container">
+    <div class="events__head">
+      <div>
+        <p class="eyebrow"><span class="eyebrow__num">03</span> Najbliższe wydarzenia</p>
+        <h2 class="h2 events__title" id="events-title">Spotkajmy się na sali</h2>
+      </div>
+      <a class="link events__all" href="/wydarzenia">Wszystkie terminy<span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+
+    {events.length > 0 ? (
+      <ul class="events__list" role="list">
+        {events.map((e) => {
+          const d = dateParts(e);
+          const p = pillarById[e.pillar];
+          return (
+            <li class:list={['event', { 'event--full': e.status === 'full' }]} data-pillar={e.pillar} data-event-date={e.date}>
+              <time class="event__date" datetime={d.iso}>
+                <span class="event__day">{d.day}</span>
+                <span class="event__meta">{d.month} · {d.weekday}{e.time && ` · ${e.time}`}</span>
+              </time>
+              <h3 class="event__title">
+                <a href={e.url}>{e.title}</a>
+              </h3>
+              <p class="event__place">{e.place}{e.region && <span> · {e.region}</span>}</p>
+              <p class="tag event__tag"><PillarIcon icon={p.icon} size={12} />{p.short}</p>
+              <span class="event__cta" aria-hidden="true">
+                {e.status === 'full' ? 'Brak miejsc' : 'Zapisz się'} <span class="arrow">→</span>
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    ) : (
+      <p class="events__empty">
+        Nowe terminy pojawią się wkrótce. <a class="link" href="/kontakt">Napisz do mnie</a>, a&nbsp;dam znać jako pierwszej osobie.
+      </p>
+    )}
+  </div>
+</section>
+
+<style>
+  .events { padding-block: var(--section-y); }
+  .events__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+  .events__title { margin-top: 1.25rem; }
+
+  .events__list { border-top: 1px solid var(--line-strong); }
+  .event {
+    position: relative;
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1.4fr) minmax(0, 1.2fr) 8rem 8rem;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.75rem 1rem;
+    margin-inline: -1rem;
+    border-bottom: 1px solid var(--line);
+    transition: background-color 400ms var(--ease-out-expo);
+  }
+  .event:hover { background: var(--p-tint); }
+
+  .event__date { display: grid; gap: 0.35rem; }
+  .event__day {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    line-height: 0.9;
+    font-variant-numeric: tabular-nums;
+  }
+  .event__meta {
+    font-size: var(--fs-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+  }
+  .event__title {
+    font-size: var(--fs-h3);
+    line-height: 1.1;
+  }
+  .event__title a { text-decoration: none; color: inherit; }
+  /* Whole row is the click target */
+  .event__title a::after { content: ""; position: absolute; inset: 0; }
+  .event__title a:focus-visible { outline: none; }
+  .event:has(a:focus-visible) { outline: 2px solid var(--text-main); outline-offset: -2px; }
+
+  .event__place { color: var(--text-muted); }
+  .event__tag { color: var(--text-muted); }
+  .event__cta {
+    justify-self: end;
+    font-weight: 600;
+    color: var(--p-ink);
+    white-space: nowrap;
+  }
+  .event:hover .arrow { transform: translateX(6px); }
+  .event--full .event__cta { color: var(--text-dim); font-weight: 500; }
+
+  .events__empty { font-size: var(--fs-lead); color: var(--text-muted); max-width: 40ch; }
+
+  @media (max-width: 999px) {
+    .event {
+      grid-template-columns: 6rem 1fr;
+      grid-template-areas: "date title" "date place" "date tag" "date cta";
+      gap: 0.4rem 1.25rem;
+      align-items: start;
+    }
+    .event__date { grid-area: date; }
+    .event__title { grid-area: title; }
+    .event__place { grid-area: place; }
+    .event__tag { grid-area: tag; margin-top: 0.25rem; }
+    .event__cta { grid-area: cta; justify-self: start; margin-top: 0.5rem; }
+  }
+</style>
+
+<script>
+  const today = new Date().toISOString().slice(0, 10);
+  document.querySelectorAll<HTMLElement>('.event[data-event-date]').forEach((el) => {
+    if ((el.dataset.eventDate ?? '') < today) el.remove();
+  });
+</script>

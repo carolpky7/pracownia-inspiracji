@@ -1,0 +1,355 @@
+---
+/**
+ * ★ BLOK FILARÓW (§4.2) — the most important section.
+ * Completes the hero sentence: "Pracownia Inspiracji Rozwoju… Osobistego / Edukacji / NGO / Biznesu".
+ * Desktop ≥1100: 4 columns with drawn 1px separators.
+ * Tablet 700–1099: 2×2 with a cross (+) of separators.
+ * Mobile <700: accordion (first open), grid-template-rows 0fr→1fr.
+ */
+import { pillars } from '../data/pillars';
+import { orphans } from '../lib/typo';
+import PillarIcon from './PillarIcon.astro';
+---
+<section class="pillars-section" id="filary" aria-labelledby="filary-title" data-reveal>
+  <div class="container">
+    <h2 class="eyebrow pillars-section__eyebrow" id="filary-title">
+      <span class="eyebrow__num">01</span> Pracownia Inspiracji Rozwoju…
+    </h2>
+
+    <div class="pillars" data-pillars>
+      {pillars.map((p, i) => (
+        <article class:list={['pcol', { 'is-open': i === 0 }]} data-pillar={p.id} style={`--i:${i}`} aria-labelledby={`pcol-${p.id}-title`}>
+          <span class="pcol__sep" aria-hidden="true"></span>
+
+          <div class="pcol__head">
+            <div class="pcol__meta" aria-hidden="true">
+              <span class="pcol__num">{String(i + 1).padStart(2, '0')}</span>
+              <PillarIcon icon={p.icon} size={18} />
+            </div>
+
+            <h3 class="pcol__title" id={`pcol-${p.id}-title`}>
+              <span class="pcol__connector">rozwoju</span>
+              <span class="pcol__name">{p.label}</span>
+            </h3>
+            <span class="pcol__bar" aria-hidden="true"></span>
+
+            <button
+              class="pcol__toggle"
+              type="button"
+              aria-expanded={i === 0 ? 'true' : 'false'}
+              aria-controls={`pcol-${p.id}-panel`}
+            >
+              <span class="visually-hidden">Rozwiń: rozwoju {p.label}</span>
+              <span class="pcol__chev" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <div class="pcol__panel" id={`pcol-${p.id}-panel`}>
+            <div class="pcol__panel-inner">
+              <p class="pcol__lead">{orphans(p.lead)}</p>
+
+              <ul class="pcol__links" role="list">
+                {p.links.map((l) => (
+                  <li>
+                    <a href={l.href}><span class="arrow" aria-hidden="true">→</span><span>{l.label}</span></a>
+                  </li>
+                ))}
+              </ul>
+
+              {p.note && (
+                <div class="pcol__note">
+                  <p>{orphans(p.note.text)}</p>
+                  <a class="link" href={p.note.cta.href}>{p.note.cta.label}<span class="arrow" aria-hidden="true">→</span></a>
+                </div>
+              )}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .pillars-section {
+    padding-block: clamp(4.5rem, 9vw, 8rem) var(--section-y);
+  }
+  .pillars-section__eyebrow {
+    font-family: var(--font-text);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .pillars {
+    --pc: clamp(1.25rem, 2.2vw, 2.25rem);
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-inline: calc(var(--pc) * -1);
+  }
+
+  /* ---------- Column ---------- */
+  .pcol {
+    position: relative;
+    padding: 2rem var(--pc) 2.5rem;
+    background: transparent;
+    transition:
+      background-color 400ms var(--ease-out-expo),
+      opacity 400ms var(--ease-out-expo);
+  }
+
+  /* Separator drawn from top to bottom when entering viewport */
+  .pcol__sep {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--line-strong);
+    transform-origin: top;
+  }
+  .pcol:first-child .pcol__sep { display: none; }
+
+  .pcol__head { position: relative; }
+  .pcol__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    color: var(--p);
+  }
+  .pcol__num {
+    font-size: var(--fs-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-dim);
+  }
+
+  .pcol__title { display: grid; }
+  .pcol__connector {
+    font-family: var(--font-sign);
+    font-size: 2.125rem;
+    line-height: 0.9;
+    letter-spacing: 0;
+    color: var(--text-muted);
+    margin-bottom: 0.15rem;
+  }
+  .pcol__name {
+    font-size: clamp(2.25rem, 3.4vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+  }
+
+  .pcol__bar {
+    display: block;
+    width: 48px;
+    max-width: 100%;
+    height: 3px;
+    margin-top: 1.25rem;
+    background: var(--p);
+    transition: width 500ms var(--ease-out-expo);
+  }
+
+  .pcol__toggle { display: none; }
+
+  .pcol__panel { display: grid; grid-template-rows: 1fr; }
+  .pcol__panel-inner { min-height: 0; overflow: hidden; }
+
+  .pcol__lead {
+    margin-top: 1.5rem;
+    max-width: 28ch;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+
+  .pcol__links { margin-top: 2rem; display: grid; }
+  .pcol__links a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem;
+    padding-block: 0.5rem;
+    min-height: 44px;
+    align-items: center;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--text-main);
+    transition: color var(--t-micro) linear;
+  }
+  .pcol__links .arrow { color: var(--p); }
+  .pcol__links a:hover { color: var(--p-ink); }
+
+  .pcol__note {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.9375rem;
+    color: var(--text-muted);
+    max-width: 30ch;
+  }
+  .pcol__note .link { display: inline-block; margin-top: 0.75rem; font-size: 1rem; }
+
+
+  /* ---------- Hover (desktop, fine pointer) ---------- */
+  @media (hover: hover) and (min-width: 1100px) {
+    .pcol:hover { background: var(--p-tint); }
+    .pcol:hover .pcol__bar { width: 100%; }
+    .pillars:has(.pcol:hover) .pcol:not(:hover) { opacity: 0.55; }
+  }
+
+  /* ---------- Reveal (only when JS is on) ---------- */
+  :global(.js) .pillars-section .pcol__sep { transform: scaleY(0); }
+  :global(.js) .pillars-section .pcol__head,
+  :global(.js) .pillars-section .pcol__panel {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  :global(.js) .pillars-section.is-in .pcol__sep {
+    transform: scaleY(1);
+    transition: transform 900ms var(--ease-out-expo) calc(var(--i) * 100ms);
+  }
+  :global(.js) .pillars-section.is-in .pcol__head,
+  :global(.js) .pillars-section.is-in .pcol__panel {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--t-reveal) var(--ease-out-expo) calc(150ms + var(--i) * 100ms),
+      transform var(--t-reveal) var(--ease-out-expo) calc(150ms + var(--i) * 100ms);
+  }
+  :global(.js) .pillars-section.is-in .pcol__panel { transition-delay: calc(260ms + var(--i) * 100ms); }
+
+  /* ---------- Tablet 2×2 with cross separators ---------- */
+  @media (min-width: 700px) and (max-width: 1099px) {
+    .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pillars { --pc: 2rem; }
+    .pcol { padding-block: 2.5rem 3rem; }
+    .pcol:nth-child(odd) .pcol__sep { display: none; }
+    .pcol:nth-child(even) .pcol__sep { display: block; }
+    .pcol:nth-child(n + 3)::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: var(--pc);
+      right: 0;
+      height: 1px;
+      background: var(--line-strong);
+    }
+    .pcol:nth-child(4)::before { left: 0; right: var(--pc); }
+  }
+
+  /* ---------- Mobile accordion ---------- */
+  @media (max-width: 699px) {
+    .pillars { grid-template-columns: 1fr; margin-inline: 0; border-top: 1px solid var(--line-strong); }
+    .pcol, .pcol:first-child, .pcol:last-child {
+      padding: 0;
+      border-bottom: 1px solid var(--line-strong);
+    }
+    .pcol__sep { display: none; }
+
+    .pcol__head {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 0 1rem;
+      min-height: 56px;
+      padding-block: 1.25rem;
+    }
+    .pcol__meta { margin: 0; grid-column: 1; grid-row: 1 / span 2; }
+    .pcol__num { display: none; }
+    .pcol__title { grid-column: 2; grid-row: 1; }
+    .pcol__connector { font-size: 1.75rem; }
+    .pcol__name { font-size: 2.25rem; }
+    .pcol__bar { grid-column: 2; grid-row: 2; margin-top: 0.75rem; transition: width var(--t-base) var(--ease-out-expo); }
+    .pcol.is-open .pcol__bar { width: 96px; }
+
+    /* Whole header row is the hit area */
+    .pcol__toggle {
+      display: block;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+    }
+    .pcol__toggle:focus-visible { outline-offset: -2px; }
+    .pcol__chev {
+      position: absolute;
+      right: 0.25rem;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      margin-top: -6px;
+    }
+    .pcol__chev::before, .pcol__chev::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 5.5px;
+      width: 12px;
+      height: 1.5px;
+      background: var(--text-main);
+      transition: transform var(--t-base) var(--ease-in-out);
+    }
+    .pcol__chev::after { transform: rotate(90deg); }
+    .pcol.is-open .pcol__chev::after { transform: rotate(0deg); }
+
+    .pcol__panel {
+      grid-template-rows: 0fr;
+      transition: grid-template-rows var(--t-base) var(--ease-out-expo);
+    }
+    .pcol.is-open .pcol__panel { grid-template-rows: 1fr; }
+    .pcol__panel-inner { padding-left: calc(18px + 1rem); }
+    .pcol__lead { margin-top: 0; }
+    .pcol__links { margin-top: 1.25rem; }
+    .pcol__panel-inner > :last-child { margin-bottom: 1.5rem; }
+
+    :global(.js) .pillars-section.is-in .pcol__panel {
+      transition: grid-template-rows var(--t-base) var(--ease-out-expo), opacity var(--t-reveal) var(--ease-out-expo), transform var(--t-reveal) var(--ease-out-expo);
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('.pillars-section');
+  if (section) {
+    // Reveal once on enter
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          section.classList.add('is-in');
+          io.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    io.observe(section);
+
+    // Accordion (mobile only)
+    const mq = window.matchMedia('(max-width: 699px)');
+    const cols = [...section.querySelectorAll<HTMLElement>('.pcol')];
+
+    const sync = () => {
+      cols.forEach((col) => {
+        const panel = col.querySelector<HTMLElement>('.pcol__panel')!;
+        const open = col.classList.contains('is-open');
+        if (mq.matches && !open) panel.setAttribute('inert', '');
+        else panel.removeAttribute('inert');
+      });
+    };
+
+    cols.forEach((col) => {
+      const btn = col.querySelector<HTMLButtonElement>('.pcol__toggle')!;
+      btn.addEventListener('click', () => {
+        const open = !col.classList.contains('is-open');
+        col.classList.toggle('is-open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        sync();
+      });
+    });
+
+    sync();
+    mq.addEventListener('change', sync);
+  }
+</script>

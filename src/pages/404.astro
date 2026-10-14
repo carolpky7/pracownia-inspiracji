@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Nie ma takiej strony | Pracownia Inspiracji Rozwoju" description="Strona, której szukasz, nie istnieje albo zmieniła adres.">
+  <section class="nf container">
+    <img src="/logo/inspiracja-black@2x.png" width="125" height="52" alt="" />
+    <h1>Tu jeszcze nic nie ma</h1>
+    <p>Ta strona nie istnieje albo zmieniła adres. Zacznij od strony głównej lub napisz do mnie.</p>
+    <p class="nf__actions"><a class="btn btn--primary" href="/">Strona główna</a> <a class="btn btn--secondary" href="/kontakt">Kontakt</a></p>
+  </section>
+</Base>
+<style>
+  .nf { padding-block: var(--section-y); }
+  .nf h1 { margin-top: 3rem; font-size: var(--fs-h2); }
+  .nf p { margin-top: 1.25rem; max-width: 44ch; color: var(--text-muted); font-size: var(--fs-lead); }
+  .nf__actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.5rem !important; }
+</style>

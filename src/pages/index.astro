@@ -1,0 +1,65 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import PillarsGrid from '../components/PillarsGrid.astro';
+import Manifest from '../components/Manifest.astro';
+import EventList from '../components/EventList.astro';
+import HowIWork from '../components/HowIWork.astro';
+import Testimonials from '../components/Testimonials.astro';
+import FinalCta from '../components/FinalCta.astro';
+import { site } from '../data/site';
+import { upcomingEvents } from '../data/events';
+
+const base = Astro.site!.toString().replace(/\/$/, '');
+const org = {
+  '@context': 'https://schema.org',
+  '@type': ['LocalBusiness', 'EducationalOrganization'],
+  '@id': `${base}/#pracownia`,
+  name: site.name,
+  legalName: site.legalName,
+  url: `${base}/`,
+  telephone: '+48881960472',
+  email: site.email,
+  image: `${base}/og-default.png`,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    postalCode: site.address.postalCode,
+    addressLocality: site.address.city,
+    addressRegion: site.address.region,
+    addressCountry: 'PL',
+  },
+  areaServed: ['Ostrowiec Świętokrzyski', 'Sandomierz', 'Ziemia Sandomierska', 'województwo świętokrzyskie'],
+  sameAs: [site.facebook],
+  founder: { '@id': `${base}/#katarzyna` },
+};
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  '@id': `${base}/#katarzyna`,
+  name: site.person,
+  jobTitle: 'Trenerka, facylitatorka',
+  worksFor: { '@id': `${base}/#pracownia` },
+  sameAs: [site.facebook],
+};
+const events = upcomingEvents().filter((e) => !e.preview).map((e) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: e.title,
+  startDate: e.time ? `${e.date}T${e.time}:00+02:00` : e.date,
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  eventStatus: 'https://schema.org/EventScheduled',
+  location: { '@type': 'Place', name: e.place, address: e.region ?? e.place },
+  organizer: { '@id': `${base}/#pracownia` },
+  url: `${base}${e.url}`,
+}));
+---
+<Base jsonLd={[org, person, ...events]}>
+  <Hero />
+  <PillarsGrid />
+  <Manifest />
+  <EventList />
+  <HowIWork />
+  <Testimonials />
+  <FinalCta />
+</Base>

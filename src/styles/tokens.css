@@ -1,0 +1,101 @@
+/* =====================================================================
+   Design tokens — Pracownia Inspiracji Rozwoju
+   Source of truth: Guideline.md §5.1, §5.2, §5.3, §5.5
+   ===================================================================== */
+
+@layer tokens {
+  :root {
+    /* --- Surfaces: pure, noble white dominates (>80% of the page) --- */
+    --bg-canvas: #ffffff;
+    --bg-surface: #fafafa;
+    --bg-subtle: #f4f4f5;
+    --line: #eaeaea;
+    --line-strong: #d4d4d8;
+
+    /* --- Text --- */
+    --text-main: #121214;
+    --text-muted: #52525b;
+    --text-dim: #71717a;
+    --white: #ffffff;
+
+    /* --- Signature pink / magenta (pillar 1: Osobisty) --- */
+    --pink: #ec008c;
+    --pink-hover: #d4007d;
+    --pink-ink: #b8006e; /* text on white, WCAG AA */
+    --pink-btn: #e00087; /* button fill: visually = #EC008C, white text passes AA (4.65:1) */
+    --pink-tint: #fdf2f8;
+    --pink-glow: rgba(236, 0, 140, 0.15);
+
+    /* --- Pillars 2–4 --- */
+    --pillar-edu: #004a8f;
+    --pillar-edu-tint: #f0f7ff;
+    --pillar-ngo: #4a8824;
+    --pillar-ngo-ink: #3b6d1d; /* text on white/tint ≥ 4.5:1 */
+    --pillar-ngo-tint: #f2f9ed;
+    --pillar-biz: #d94320;
+    --pillar-biz-ink: #b43518; /* text on white/tint ≥ 4.5:1 */
+    --pillar-biz-tint: #fdf4f2;
+
+    /* --- Aliases used across guideline prose (§4) --- */
+    --ink: var(--text-main);
+    --ink-70: var(--text-muted);
+    --ink-60: var(--text-dim);
+    --paper: var(--bg-canvas);
+    --paper-2: var(--bg-surface);
+    --paper-3: var(--bg-subtle);
+    --magenta: var(--pink);
+    --magenta-ink: var(--pink-ink);
+    --magenta-tint: var(--pink-tint);
+    --blue: var(--pillar-edu);
+    --green: var(--pillar-ngo);
+    --cinnabar: var(--pillar-biz);
+
+    /* --- On dark (header, CTA, footer) --- */
+    --on-ink: #f4f4f5;
+    --on-ink-muted: #a1a1aa;
+    --on-ink-line: rgba(255, 255, 255, 0.12);
+    --pink-on-ink: #ff4fb4; /* pink text on --ink, AA */
+
+    /* --- Typography --- */
+    --font-display: "Gloock", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --font-text: "Albert Sans Variable", "Albert Sans", "Avenir Next", "Segoe UI Variable", system-ui, sans-serif;
+    --font-sign: "Corinthia", "Segoe Script", cursive;
+
+    --fs-display: clamp(3rem, 7.2vw, 7.5rem);
+    --fs-h2: clamp(2.25rem, 4.6vw, 4.25rem);
+    --fs-h3: clamp(1.625rem, 2.6vw, 2.25rem);
+    --fs-lead: clamp(1.125rem, 1.4vw, 1.375rem);
+    --fs-body: 1.0625rem;
+    --fs-small: 0.875rem;
+    --fs-eyebrow: 0.8125rem;
+    --lh-tight: 0.95;
+    --lh-head: 1.08;
+    --lh-body: 1.6;
+
+    /* --- Layout --- */
+    --container: 1440px;
+    --gutter-x: clamp(1.25rem, 4vw, 4rem);
+    --gap: clamp(1rem, 2vw, 2rem);
+    --section-y: clamp(6rem, 12vw, 11rem);
+    --header-h: 72px;
+
+    /* --- Motion --- */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --t-micro: 150ms;
+    --t-base: 280ms;
+    --t-reveal: 600ms;
+    --t-ambient: 1200ms;
+  }
+
+  @media (max-width: 699px) {
+    :root { --header-h: 60px; }
+  }
+
+  /* Per-pillar context: set data-pillar on any element to retint it */
+  [data-pillar="osobisty"] { --p: var(--pink); --p-ink: var(--pink-ink); --p-tint: var(--pink-tint); --p-on-ink: #ff4fb4; }
+  [data-pillar="edukacja"] { --p: var(--pillar-edu); --p-ink: var(--pillar-edu); --p-tint: var(--pillar-edu-tint); --p-on-ink: #6fa8eb; }
+  [data-pillar="ngo"]      { --p: var(--pillar-ngo); --p-ink: var(--pillar-ngo-ink); --p-tint: var(--pillar-ngo-tint); --p-on-ink: #86c45e; }
+  [data-pillar="biznes"]   { --p: var(--pillar-biz); --p-ink: var(--pillar-biz-ink); --p-tint: var(--pillar-biz-tint); --p-on-ink: #ff7d5c; }
+}

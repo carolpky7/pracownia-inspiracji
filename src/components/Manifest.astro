@@ -1,0 +1,127 @@
+---
+/** Manifest / „Od wolontariuszki do trenerki” (§4.3) */
+import { Picture } from 'astro:assets';
+import portrait from '../assets/photos/katarzyna-portret.jpg';
+const path = ['wolontariuszka', 'liderka', 'dyrektorka', 'prezeska', 'trenerka'];
+---
+<section class="manifest" aria-labelledby="manifest-title">
+  <div class="container manifest__grid">
+    <div class="manifest__main">
+      <h2 class="eyebrow" id="manifest-title"><span class="eyebrow__num">02</span> Moja droga</h2>
+      <blockquote class="manifest__quote">
+        <p><span class="hang">„</span>Wiele rzeczy można doczytać, ale o&nbsp;wiele szybciej można uzyskać efekt, siadając z&nbsp;ludźmi na sali.”</p>
+      </blockquote>
+
+      <ol class="manifest__path" role="list" aria-label="Moja droga zawodowa">
+        {path.map((w, i) => (
+          <li class:list={{ 'is-last': i === path.length - 1 }}>{w}</li>
+        ))}
+      </ol>
+    </div>
+
+    <figure class="manifest__aside">
+      <Picture
+        src={portrait}
+        formats={['avif', 'webp']}
+        widths={[360, 540, 720]}
+        sizes="(max-width: 899px) 22rem, 33vw"
+        alt="Katarzyna Janina Lipska w białej sukience idzie korytarzem w smudze słońca. Za nią na tablicy kredą: „Jeśli potrafisz o czymś marzyć, możesz też tego dokonać” i rysunek iskry"
+        class="manifest__photo"
+        loading="lazy"
+        decoding="async"
+      />
+      <figcaption>
+        Przeszłam drogę od wolontariuszki do liderki, dyrektorki, prezeski i&nbsp;przede wszystkim trenerki. Długą i&nbsp;wyboistą.
+        <a class="link" href="/o-mnie">Moja historia<span class="arrow" aria-hidden="true">→</span></a>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .manifest {
+    background: var(--bg-surface);
+    padding-block: var(--section-y);
+  }
+  .manifest__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+  .manifest__main { grid-column: 1 / span 8; }
+  .manifest__quote {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 4rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    max-width: 20ch;
+  }
+  .manifest__quote p { text-wrap: balance; }
+  .hang { margin-left: -0.42em; }
+
+  .manifest__path {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0;
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-lead);
+    color: var(--text-muted);
+  }
+  .manifest__path li { display: flex; align-items: center; }
+  .manifest__path li + li::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    margin-inline: 0.9rem;
+    border-radius: 50%;
+    background: var(--line-strong);
+  }
+  .manifest__path .is-last { color: var(--pink-ink); font-weight: 600; }
+  .manifest__path .is-last::before { background: var(--pink); }
+
+  .manifest__aside { grid-column: 9 / -1; }
+  .manifest__aside :global(.manifest__photo) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 0%;
+  }
+  .manifest__aside figcaption {
+    margin-top: 1.25rem;
+    font-size: 0.9375rem;
+    color: var(--text-muted);
+  }
+  .manifest__aside .link { display: table; margin-top: 0.75rem; }
+
+  @media (max-width: 899px) {
+    .manifest__grid { display: block; }
+    .manifest__aside { margin-top: 3rem; max-width: 22rem; }
+  }
+  @media (max-width: 599px) {
+    .manifest__path { flex-direction: column; align-items: flex-start; gap: 0; }
+    .manifest__path li { padding-block: 0.15rem; }
+    .manifest__path li + li::before { display: none; }
+    .manifest__path li::after { content: none; }
+    .manifest__path li { padding-left: 1.25rem; position: relative; }
+    .manifest__path li::before {
+      content: "" !important;
+      display: block !important;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 5px;
+      height: 5px;
+      margin: -2.5px 0 0 0 !important;
+      border-radius: 50%;
+      background: var(--line-strong);
+    }
+    .manifest__path .is-last::before { background: var(--pink) !important; }
+  }
+</style>

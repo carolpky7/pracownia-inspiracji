@@ -1,0 +1,69 @@
+---
+/**
+ * Sygnet „Iskra” rebuilt from primitives (§6): 1 circle + 3 rays.
+ * Geometry measured from Logo_Files/1_inspiracja_sygnet_black.png.
+ * variant:
+ *  - "mono"    — single color (currentColor)
+ *  - "pillars" — each element in its pillar color (dot=magenta, left=blue, mid=green, right=cinnabar)
+ * ignite: draws rays outward from the dot once on load (§2.2, §5.5).
+ */
+interface Props {
+  variant?: 'mono' | 'pillars';
+  ignite?: boolean;
+  class?: string;
+  title?: string;
+}
+const { variant = 'mono', ignite = false, class: className = '', title } = Astro.props;
+const colors =
+  variant === 'pillars'
+    ? { dot: 'var(--pink)', left: 'var(--pillar-edu)', mid: 'var(--pillar-ngo)', right: 'var(--pillar-biz)' }
+    : { dot: 'currentColor', left: 'currentColor', mid: 'currentColor', right: 'currentColor' };
+const W = 125;
+---
+<svg
+  class:list={['signet', { 'signet--ignite': ignite }, className]}
+  viewBox="140 240 1680 1300"
+  xmlns="http://www.w3.org/2000/svg"
+  role={title ? 'img' : undefined}
+  aria-hidden={title ? undefined : 'true'}
+  aria-label={title}
+  focusable="false"
+>
+  <g class="signet__ray signet__ray--left" data-el="ray-left">
+    <line x1="196.5" y1="549.5" x2="613.5" y2="965.5" stroke={colors.left} stroke-width={W} />
+  </g>
+  <g class="signet__ray signet__ray--mid" data-el="ray-mid">
+    <line x1="919.5" y1="249" x2="919.5" y2="838" stroke={colors.mid} stroke-width={W} />
+  </g>
+  <g class="signet__ray signet__ray--right" data-el="ray-right">
+    <line x1="1227" y1="963" x2="1761" y2="430" stroke={colors.right} stroke-width={W} />
+  </g>
+  <circle class="signet__dot" data-el="dot" cx="921" cy="1272" r="251" fill={colors.dot} />
+</svg>
+
+<style>
+  .signet { overflow: visible; }
+  .signet line { stroke-linecap: butt; }
+  .signet__dot, .signet__ray { transform-box: fill-box; }
+  .signet__dot { transform-origin: center; }
+
+  .signet--ignite .signet__dot {
+    animation: dot-in 700ms var(--ease-out-expo) 150ms both;
+  }
+  .signet--ignite .signet__ray {
+    animation: ray-out 900ms var(--ease-out-expo) both;
+  }
+  /* Each ray slides out from the dot along its own axis; stagger 120 ms (§2.2) */
+  .signet--ignite .signet__ray--left  { --from: translate(22%, 22%);  animation-delay: 500ms; }
+  .signet--ignite .signet__ray--mid   { --from: translate(0, 35%);    animation-delay: 620ms; }
+  .signet--ignite .signet__ray--right { --from: translate(-18%, 18%); animation-delay: 740ms; }
+
+  @keyframes dot-in {
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes ray-out {
+    from { opacity: 0; transform: var(--from); }
+    to   { opacity: 1; transform: none; }
+  }
+</style>

@@ -1,0 +1,68 @@
+[
+  {
+    "title": "Moje JA, Moja MOC",
+    "date": "2026-10-24",
+    "time": "10:00",
+    "place": "Kwitnące Jabłonie",
+    "region": "Ziemia Sandomierska",
+    "pillar": "osobisty",
+    "url": "/wydarzenia/moje-ja-moja-moc-2026-10",
+    "status": "open",
+    "_note": "Termin i godzina wzięte z przykładu w Guideline §4.1 — DO POTWIERDZENIA z klientką przed publikacją."
+  },
+  {
+    "title": "Odporność w pokoju nauczycielskim",
+    "date": "2026-11-07",
+    "time": "09:00",
+    "place": "Ostrowiec Świętokrzyski",
+    "region": "warsztat dla rad pedagogicznych",
+    "pillar": "edukacja",
+    "url": "/wydarzenia/odpornosc-w-pokoju-nauczycielskim",
+    "status": "open",
+    "preview": true
+  },
+  {
+    "title": "Matka & Córka",
+    "date": "2026-11-14",
+    "time": "11:00",
+    "place": "Domki w sadzie",
+    "region": "okolice Sandomierza",
+    "pillar": "osobisty",
+    "url": "/wydarzenia/matka-corka-listopad",
+    "status": "full",
+    "preview": true
+  },
+  {
+    "title": "Metoda projektu: od pomysłu do rozliczenia",
+    "date": "2026-11-21",
+    "time": "10:00",
+    "place": "Opatów",
+    "region": "dla organizacji i grup nieformalnych",
+    "pillar": "ngo",
+    "url": "/wydarzenia/metoda-projektu-opatow",
+    "status": "open",
+    "preview": true
+  },
+  {
+    "title": "Zespół, który się nie wypala",
+    "date": "2026-11-27",
+    "time": "09:30",
+    "place": "Kielce",
+    "region": "warsztat dla zespołów",
+    "pillar": "biznes",
+    "url": "/wydarzenia/zespol-ktory-sie-nie-wypala",
+    "status": "open",
+    "preview": true
+  },
+  {
+    "title": "Spotkanie liderek KGW",
+    "date": "2026-12-05",
+    "time": "10:00",
+    "place": "Ćmielów",
+    "region": "Ziemia Sandomierska",
+    "pillar": "ngo",
+    "url": "/wydarzenia/spotkanie-liderek-kgw",
+    "status": "open",
+    "preview": true
+  }
+]

@@ -1,0 +1,189 @@
+---
+/**
+ * Opinie (§4.6): one large quote at a time, arrows or swipe, no autoplay.
+ * Square photo (always the same size) in the left column, swapped together with the quote.
+ * Data: src/data/testimonials.ts
+ */
+import { Image } from 'astro:assets';
+import { testimonials as items, initials } from '../data/testimonials';
+import { orphans } from '../lib/typo';
+---
+<section class="quotes" aria-labelledby="quotes-title" aria-roledescription="karuzela" data-quotes>
+  <div class="container quotes__grid">
+    <div class="quotes__aside">
+      <h2 class="eyebrow" id="quotes-title"><span class="eyebrow__num">05</span> Opinie</h2>
+
+      <div class="quotes__photos" aria-hidden="true">
+        {items.map((t, i) => (
+          <div class:list={['quotes__photo', { 'is-active': i === 0 }]} data-pillar={t.pillar} data-photo>
+            {t.photo ? (
+              <Image src={t.photo} alt="" widths={[240, 480]} sizes="240px" loading="lazy" decoding="async" />
+            ) : (
+              <span class="quotes__initials">{initials(t.author)}</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="quotes__main">
+      <div class="quotes__stage" data-stage>
+        {items.map((t, i) => (
+          <figure
+            class="quote"
+            role="group"
+            aria-roledescription="opinia"
+            aria-label={`${i + 1} z ${items.length}`}
+            hidden={i !== 0}
+            data-slide
+          >
+            <blockquote class="quote__text"><p><span class="hang">„</span>{orphans(t.quote)}”</p></blockquote>
+            <figcaption class="quote__by">
+              <span class="quote__author">{t.author}</span>
+              <span class="quote__context">{t.context}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      {items.length > 1 && (
+        <div class="quotes__controls">
+          <button class="quotes__btn" type="button" data-prev aria-label="Poprzednia opinia"><span aria-hidden="true">←</span></button>
+          <p class="quotes__count" aria-live="polite"><span data-current>1</span> / {items.length}</p>
+          <button class="quotes__btn" type="button" data-next aria-label="Następna opinia"><span aria-hidden="true">→</span></button>
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .quotes {
+    --photo: clamp(180px, 16vw, 240px);
+    padding-block: var(--section-y);
+    border-top: 1px solid var(--line);
+  }
+  .quotes__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+  .quotes__aside { grid-column: 1 / span 3; }
+  .quotes__main { grid-column: 4 / -1; }
+
+  /* --- Square photo: fixed size, stacked; only the active one is visible --- */
+  .quotes__photos {
+    position: relative;
+    width: var(--photo);
+    aspect-ratio: 1;
+    margin-top: 2rem;
+    background: var(--bg-subtle);
+  }
+  .quotes__photo {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 500ms var(--ease-out-expo);
+  }
+  .quotes__photo.is-active { opacity: 1; }
+  .quotes__photo :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+  /* pillar accent under the photo */
+  .quotes__photo::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -9px;
+    width: 48px;
+    height: 3px;
+    background: var(--p, var(--pink));
+  }
+  .quotes__initials {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    font-family: var(--font-display);
+    font-size: calc(var(--photo) * 0.32);
+    color: var(--text-dim);
+  }
+
+  /* All slides share one grid cell, so the section keeps the height of the longest quote (controls never jump) */
+  .quotes__stage { display: grid; touch-action: pan-y; }
+  .quote { grid-area: 1 / 1; }
+  .quote[hidden] { display: block; visibility: hidden; }
+  .quote:not([hidden]) { animation: q-in 500ms var(--ease-out-expo); }
+  @keyframes q-in { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+  .quote__text {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    max-width: 30ch;
+  }
+  .hang { margin-left: -0.42em; }
+  .quote__by { display: grid; gap: 0.15rem; margin-top: 2rem; }
+  .quote__author { font-weight: 600; }
+  .quote__context { color: var(--text-dim); font-size: var(--fs-small); }
+
+  .quotes__controls {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+  }
+  .quotes__btn {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-size: 1.125rem;
+    transition: border-color var(--t-micro) linear, background-color var(--t-micro) linear, color var(--t-micro) linear;
+  }
+  .quotes__btn:hover { border-color: var(--text-main); background: var(--text-main); color: var(--white); }
+  .quotes__count { font-size: var(--fs-small); color: var(--text-dim); font-variant-numeric: tabular-nums; min-width: 3.5em; text-align: center; }
+
+  @media (max-width: 799px) {
+    .quotes { --photo: 128px; }
+    .quotes__grid { display: block; }
+    .quotes__photos { margin-block: 1.75rem 2.25rem; }
+    .quotes__main { padding-left: 0.5rem; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-quotes]');
+  if (root) {
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+    const photos = [...root.querySelectorAll<HTMLElement>('[data-photo]')];
+    const current = root.querySelector<HTMLElement>('[data-current]');
+    let i = 0;
+    const show = (n: number) => {
+      i = (n + slides.length) % slides.length;
+      slides.forEach((s, k) => (s.hidden = k !== i));
+      photos.forEach((p, k) => p.classList.toggle('is-active', k === i));
+      if (current) current.textContent = String(i + 1);
+    };
+    root.querySelector('[data-prev]')?.addEventListener('click', () => show(i - 1));
+    root.querySelector('[data-next]')?.addEventListener('click', () => show(i + 1));
+
+    // Swipe / drag
+    const stage = root.querySelector<HTMLElement>('[data-stage]')!;
+    let x0: number | null = null;
+    stage.addEventListener('pointerdown', (e) => (x0 = e.clientX));
+    stage.addEventListener('pointerup', (e) => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0;
+      if (Math.abs(dx) > 40) show(i + (dx < 0 ? 1 : -1));
+      x0 = null;
+    });
+  }
+</script>

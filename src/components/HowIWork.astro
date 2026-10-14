@@ -1,0 +1,55 @@
+---
+/** Jak pracuję (§4.5): three text columns, no icons. Copy to approve with the client. */
+const formats = [
+  {
+    title: 'Na sali',
+    text: 'Kilka godzin skoncentrowanej pracy z grupą: w kręgu, z kartami, przy flipcharcie. Tu najszybciej widać efekt, bo ludzie uczą się od siebie nawzajem.',
+  },
+  {
+    title: '1:1',
+    text: 'Rozmowa w cztery oczy, gdy trzeba uporządkować sytuację, podjąć decyzję albo przygotować się do zmiany. Dla kobiet, nauczycieli i dyrektorów.',
+  },
+  {
+    title: 'Na scenie',
+    text: 'Wystąpienia na konferencjach, zjazdach i spotkaniach. Krótko, z historią i z czymś, co zostaje w głowie na dłużej.',
+  },
+];
+import { orphans } from '../lib/typo';
+---
+<section class="how" aria-labelledby="how-title">
+  <div class="container">
+    <h2 class="eyebrow" id="how-title"><span class="eyebrow__num">04</span> Jak pracuję</h2>
+    <ol class="how__list" role="list">
+      {formats.map((f, i) => (
+        <li class="how__item">
+          <span class="how__num">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="how__title">{f.title}</h3>
+          <p class="how__text">{orphans(f.text)}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .how { padding-block: 0 var(--section-y); }
+  .how__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gap) clamp(2rem, 5vw, 5rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+  .how__item { border-top: 1px solid var(--text-main); padding-top: 1.5rem; }
+  .how__num {
+    font-size: var(--fs-eyebrow);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-dim);
+  }
+  .how__title { margin-top: 1.5rem; font-size: var(--fs-h3); }
+  .how__text { margin-top: 1rem; color: var(--text-muted); max-width: 36ch; }
+
+  @media (max-width: 799px) {
+    .how__list { grid-template-columns: 1fr; gap: 3rem; }
+  }
+</style>

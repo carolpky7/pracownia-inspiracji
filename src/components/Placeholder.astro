@@ -1,0 +1,8 @@
+---
+/** Photo placeholder (§7): flat --paper-3 block describing the exact shot needed. Never stock. */
+interface Props { title: string; brief: string; class?: string; ratio?: string }
+const { title, brief, class: className = '', ratio } = Astro.props;
+---
+<div class:list={['ph', className]} style={ratio ? `aspect-ratio:${ratio}` : undefined} role="img" aria-label={`Miejsce na zdjęcie: ${brief}`}>
+  <p class="ph__label"><strong>{title}</strong>{brief}</p>
+</div>

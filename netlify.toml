@@ -1,0 +1,9 @@
+# Netlify – WERSJA TESTOWA (podgląd dla klientki)
+# build:preview = przykładowe wydarzenia i opinie + noindex (Google nie zaindeksuje).
+# Przed publikacją produkcyjną zmień command na "npm run build".
+[build]
+  command = "npm run build:preview"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"

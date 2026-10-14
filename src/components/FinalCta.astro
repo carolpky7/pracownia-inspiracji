@@ -1,0 +1,52 @@
+---
+/** CTA końcowe (§4.9) */
+import Signet from './Signet.astro';
+import { site } from '../data/site';
+---
+<section class="cta on-ink" aria-labelledby="cta-title">
+  <div class="cta__signet" aria-hidden="true"><Signet /></div>
+  <div class="container cta__inner">
+    <h2 class="cta__title" id="cta-title">Masz pomysł? Zapalmy go razem.</h2>
+    <p class="cta__lead">Warsztat dla rady pedagogicznej, spotkanie dla KGW, dzień dla kobiet albo program dla zespołu. Napisz, od czego chcesz zacząć.</p>
+    <div class="cta__actions">
+      <a class="btn btn--primary" href="/kontakt">Napisz do mnie</a>
+      <a class="btn btn--on-ink" href={site.phoneHref}>Zadzwoń: {site.phone}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    position: relative;
+    overflow: clip;
+    background: var(--ink);
+    color: var(--on-ink);
+    padding-block: var(--section-y);
+  }
+  .cta__signet {
+    position: absolute;
+    right: -10vw;
+    top: 18%;
+    width: min(54vw, 780px);
+    color: #fff;
+    opacity: 0.95;
+  }
+  .cta__inner { position: relative; }
+  .cta__title {
+    font-size: var(--fs-h2);
+    line-height: 1.02;
+    max-width: 12ch;
+  }
+  .cta__lead {
+    margin-top: 1.75rem;
+    max-width: 44ch;
+    font-size: var(--fs-lead);
+    color: var(--on-ink-muted);
+  }
+  .cta__actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.5rem; }
+  .cta .btn--primary:focus-visible { outline-color: var(--on-ink); }
+
+  @media (max-width: 799px) {
+    .cta__signet { top: auto; bottom: -12vw; right: -18vw; width: 70vw; transform: none; opacity: 0.12; }
+  }
+</style>

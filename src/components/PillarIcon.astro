@@ -1,0 +1,15 @@
+---
+/** Micro-icon of a pillar: a fragment of the signet (§2.2). Never replace with other icons. */
+import type { PillarIcon } from '../data/pillars';
+interface Props { icon: PillarIcon; size?: number; class?: string; color?: string }
+const { icon, size = 16, class: className = '', color = 'var(--p, currentColor)' } = Astro.props;
+---
+<svg class:list={['picon', className]} width={size} height={size} viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+  {icon === 'dot' && <circle cx="8" cy="8" r="5" fill={color} />}
+  {icon === 'ray-left' && <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" stroke={color} stroke-width="2.6" />}
+  {icon === 'ray-mid' && <line x1="8" y1="1" x2="8" y2="15" stroke={color} stroke-width="2.6" />}
+  {icon === 'ray-right' && <line x1="13.5" y1="2.5" x2="2.5" y2="13.5" stroke={color} stroke-width="2.6" />}
+</svg>
+<style>
+  .picon { flex: none; overflow: visible; }
+</style>

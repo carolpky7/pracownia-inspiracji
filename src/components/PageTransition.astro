@@ -1,0 +1,175 @@
+---
+/**
+ * Page transition (V2): plays ONLY when navigating between pages, never on the first visit.
+ *
+ * Leave (current page):  magenta panel wipes up → white dot pops → 3 rays shoot out
+ *                        from the dot (left, middle, right) → wordmark "inspıracja" rises below
+ *                        → navigate.
+ * Arrive (next page):    the panel is already covering the page with the finished logo
+ *                        (class set in <head> before first paint) → wipes away upward.
+ *
+ * Geometry is measured from Logo_Files/2_inspiracja_white.png (viewBox = logo bounds in px).
+ * prefers-reduced-motion: no overlay at all.
+ */
+---
+<div class="pt" aria-hidden="true" data-pt>
+  <svg class="pt__logo" viewBox="413 443 2126 885" xmlns="http://www.w3.org/2000/svg" focusable="false">
+    <defs>
+      <clipPath id="pt-wm-clip"><rect x="640" y="990" width="1920" height="360" /></clipPath>
+    </defs>
+    <!-- rays: drawn from the dot outward (pathLength=1 → dash animation independent of length) -->
+    <line class="pt__ray pt__ray--l" x1="575.5" y1="696.5" x2="428.5" y2="549.5" pathLength="1" />
+    <line class="pt__ray pt__ray--m" x1="684" y1="651" x2="684" y2="443" pathLength="1" />
+    <line class="pt__ray pt__ray--r" x1="792.6" y1="695.4" x2="980.4" y2="507.6" pathLength="1" />
+    <circle class="pt__dot" cx="684.5" cy="804.5" r="88.5" />
+    <g clip-path="url(#pt-wm-clip)">
+      <image class="pt__wm" href="/logo/wordmark-white.png" x="661" y="1014" width="1878" height="314" />
+    </g>
+  </svg>
+</div>
+
+<style is:global>
+  .pt {
+    --pt-bg: #ec008c;
+    --pt-in: 420ms;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    background: var(--pt-bg);
+    visibility: hidden;
+    pointer-events: none;
+    clip-path: inset(100% 0 0 0);
+  }
+  .pt__logo {
+    width: min(46vw, 320px);
+    height: auto;
+    overflow: visible;
+  }
+  .pt__dot {
+    fill: #fff;
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0);
+  }
+  .pt__ray {
+    stroke: #fff;
+    stroke-width: 45;
+    stroke-linecap: butt;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  .pt__wm {
+    transform-box: fill-box;
+    transform: translateY(115%);
+  }
+
+  /* ---------- LEAVE: full build-up ---------- */
+  html.pt-leave .pt {
+    visibility: visible;
+    pointer-events: auto;
+    animation: pt-wipe-in var(--pt-in) cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+  html.pt-leave .pt__dot {
+    animation: pt-dot 520ms cubic-bezier(0.34, 1.56, 0.64, 1) 300ms forwards;
+  }
+  html.pt-leave .pt__ray { animation: pt-ray 380ms cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  html.pt-leave .pt__ray--l { animation-delay: 560ms; }
+  html.pt-leave .pt__ray--m { animation-delay: 660ms; }
+  html.pt-leave .pt__ray--r { animation-delay: 760ms; }
+  html.pt-leave .pt__wm {
+    animation: pt-wm 560ms cubic-bezier(0.16, 1, 0.3, 1) 930ms forwards;
+  }
+
+  /* ---------- ARRIVE: finished logo on magenta, then wipe away ---------- */
+  html.pt-arrive .pt {
+    visibility: visible;
+    clip-path: inset(0 0 0 0);
+  }
+  html.pt-arrive .pt__dot { transform: none; }
+  html.pt-arrive .pt__ray { stroke-dashoffset: 0; }
+  html.pt-arrive .pt__wm { transform: none; }
+
+  html.pt-arrive.pt-exit .pt {
+    animation: pt-wipe-out 720ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+  html.pt-arrive.pt-exit .pt__logo {
+    animation: pt-logo-out 520ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+
+  @keyframes pt-wipe-in  { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes pt-wipe-out { from { clip-path: inset(0 0 0 0); }   to { clip-path: inset(0 0 100% 0); } }
+  @keyframes pt-dot  { from { transform: scale(0); } to { transform: scale(1); } }
+  @keyframes pt-ray  { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes pt-wm   { from { transform: translateY(115%); } to { transform: none; } }
+  @keyframes pt-logo-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(-24px); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pt { display: none !important; }
+  }
+</style>
+
+<script>
+  const KEY = 'piro:pt';
+  const LEAVE_MS = 1600; // must cover the whole build-up (wordmark ends at ~1490 ms)
+  const html = document.documentElement;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const store = {
+    set() { try { sessionStorage.setItem(KEY, '1'); } catch {} },
+    clear() { try { sessionStorage.removeItem(KEY); } catch {} },
+  };
+
+  // ---------- Arrive ----------
+  const finishArrive = () => {
+    if (!html.classList.contains('pt-arrive')) return;
+    store.clear();
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        html.classList.add('pt-exit');
+        const pt = document.querySelector('[data-pt]');
+        const done = () => html.classList.remove('pt-arrive', 'pt-exit');
+        pt?.addEventListener('animationend', (e) => { if (e.target === pt) done(); }, { once: false });
+        setTimeout(done, 1000); // safety net
+      }, 120);
+    });
+  };
+  if (document.readyState === 'complete') finishArrive();
+  else window.addEventListener('load', finishArrive, { once: true });
+
+  // Back/forward cache: never show a stale overlay
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) {
+      html.classList.remove('pt-leave', 'pt-arrive', 'pt-exit');
+      store.clear();
+    }
+  });
+
+  // ---------- Leave ----------
+  const isTransitionLink = (a: HTMLAnchorElement, e: MouseEvent) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return false;
+    if (a.target && a.target !== '_self') return false;
+    if (a.hasAttribute('download') || a.dataset.noTransition !== undefined) return false;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin) return false;
+    if (!/^https?:$/.test(url.protocol)) return false;
+    // same page (only hash differs) → normal in-page scroll
+    if (url.pathname === location.pathname && url.search === location.search) return false;
+    return true;
+  };
+
+  let leaving = false;
+  document.addEventListener('click', (e) => {
+    if (reduced || leaving) return;
+    const a = (e.target as Element | null)?.closest?.('a[href]') as HTMLAnchorElement | null;
+    if (!a || !isTransitionLink(a, e)) return;
+
+    e.preventDefault();
+    leaving = true;
+    const href = a.href;
+    store.set();
+    html.classList.add('pt-leave');
+    setTimeout(() => { window.location.href = href; }, LEAVE_MS);
+  });
+</script>
